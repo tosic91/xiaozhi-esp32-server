@@ -1,0 +1,66 @@
+server:
+  port: 8000
+  http_port: 8003
+  websocket: wss://xiaozhi-server-production-5d25.up.railway.app/xiaozhi/v1/
+  timezone_offset: +7
+  auth:
+    enabled: false
+
+delete_audio: true
+close_connection_no_voice_time: 120
+tts_timeout: 15
+enable_wakeup_words_response_cache: true
+enable_greeting: true
+
+wakeup_words:
+  - "xin chào"
+  - "hello"
+
+prompt: |
+  Bạn là trợ lý AI tên Xiaozhi, nói tiếng Việt tự nhiên, thân thiện.
+  Trả lời ngắn gọn 2-3 câu. Kể chuyện sinh động. Dạy học rõ ràng.
+
+selected_module:
+  VAD: SileroVAD
+  ASR: GroqASR
+  LLM: GeminiLLM
+  TTS: EdgeTTS
+  Memory: mem_local_short
+  Intent: function_call
+
+Intent:
+  function_call:
+    type: function_call
+    functions:
+      - change_role
+      - get_weather
+
+ASR:
+  GroqASR:
+    type: openai
+    api_key: __GROQ_API_KEY__
+    base_url: https://api.groq.com/openai/v1/audio/transcriptions
+    model_name: whisper-large-v3-turbo
+    output_dir: tmp/
+
+LLM:
+  GeminiLLM:
+    type: gemini
+    api_key: __GEMINI_API_KEY__
+    model_name: "gemini-2.0-flash"
+
+TTS:
+  EdgeTTS:
+    type: edge
+    voice: vi-VN-HoaiMyNeural
+    output_dir: tmp/
+
+Memory:
+  mem_local_short:
+    type: mem_local_short
+
+plugins:
+  get_weather:
+    api_host: "mj7p3y7naa.re.qweatherapi.com"
+    api_key: "a861d0d5e7bf4ee1a83d9a9e4f96d4da"
+    default_location: "Ho Chi Minh"
