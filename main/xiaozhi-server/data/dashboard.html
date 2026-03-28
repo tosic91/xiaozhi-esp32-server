@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mochi Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+:root{--bg:#0f0f1a;--card:#1a1a2e;--border:#2a2a3e;--accent:#7c3aed;--al:#a78bfa;--green:#22c55e;--text:#e2e8f0;--dim:#94a3b8;--mut:#64748b;--pink:#ec4899;--blue:#3b82f6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.hd{background:linear-gradient(135deg,#1e1b4b,#312e81,#4c1d95);padding:20px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(124,58,237,.3)}
+.hd-l{display:flex;align-items:center;gap:14px}
+.logo{font-size:36px;animation:fl 3s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.hd h1{font-size:22px;font-weight:700;background:linear-gradient(135deg,#c084fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hd p{color:var(--dim);font-size:13px}
+.st{display:flex;align-items:center;gap:8px;padding:7px 14px;border-radius:100px;font-size:12px;font-weight:500}
+.st.on{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.3)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pu 2s infinite}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.4}}
+.ct{max-width:1100px;margin:0 auto;padding:20px}
+.tabs{display:flex;gap:3px;margin-bottom:20px;background:var(--card);padding:3px;border-radius:10px;border:1px solid var(--border)}
+.tab{flex:1;padding:10px;border:none;background:0 0;color:var(--dim);font-family:inherit;font-size:13px;font-weight:500;border-radius:7px;cursor:pointer;transition:.2s;text-align:center}
+.tab:hover{color:var(--text);background:rgba(124,58,237,.1)}
+.tab.active{background:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.4)}
+.tc{display:none}.tc.active{display:block;animation:fi .3s}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.cd{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
+.cd:hover{border-color:rgba(124,58,237,.3)}
+.cd h2{font-size:16px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.cb{background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(59,130,246,.1));border:2px dashed rgba(124,58,237,.4);border-radius:14px;padding:28px;text-align:center;margin-bottom:16px}
+.cb:hover{border-color:var(--accent)}
+.ws{font-family:monospace;background:rgba(0,0,0,.3);padding:10px 18px;border-radius:8px;display:inline-block;margin:10px 0;font-size:13px;color:var(--al);word-break:break-all;cursor:pointer;border:1px solid var(--border)}
+.ws:hover{border-color:var(--accent)}
+.sp{display:flex;gap:14px;align-items:flex-start;padding:12px;background:rgba(124,58,237,.05);border-radius:10px;margin-bottom:10px}
+.sn{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.sp h3{font-size:14px;margin-bottom:2px}.sp p{font-size:12px;color:var(--dim);line-height:1.4}
+.pc{background:rgba(124,58,237,.06);border:1px solid var(--border);border-radius:10px;padding:14px;transition:.25s}
+.pc:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 6px 20px rgba(124,58,237,.15)}
+.pi{font-size:26px;margin-bottom:6px;display:block}
+.pn{font-size:13px;font-weight:600;margin-bottom:3px}
+.pd{font-size:11px;color:var(--dim);line-height:1.4}
+.pv{margin-top:6px;font-size:10px;padding:2px 7px;border-radius:100px;display:inline-block}
+.vf{background:rgba(236,72,153,.15);color:var(--pink)}.vm{background:rgba(59,130,246,.15);color:var(--blue)}
+.pt{margin-top:4px;font-size:10px;color:var(--mut)}
+.it{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:7px;margin-bottom:6px;background:rgba(124,58,237,.04)}
+.it:hover{background:rgba(124,58,237,.1)}
+.ii{font-size:22px}.it h4{font-size:13px;font-weight:500}.it p{font-size:11px;color:var(--dim)}
+.ms{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mf{padding:10px;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);border-radius:7px}
+.mf h4{font-size:12px;color:var(--green);margin-bottom:3px}.mf p{font-size:11px;color:var(--dim)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--green);color:#fff;padding:8px 20px;border-radius:100px;font-size:13px;box-shadow:0 6px 20px rgba(34,197,94,.3);transition:transform .3s;z-index:999}
+.toast.show{transform:translateX(-50%) translateY(0)}
+a{color:var(--al);text-decoration:none}a:hover{text-decoration:underline}
+@media(max-width:768px){.g2,.g3,.ms{grid-template-columns:1fr}.tabs{flex-wrap:wrap}.hd{flex-direction:column;gap:10px;text-align:center}}
+</style>
+</head>
+<body>
+<div class="hd">
+  <div class="hd-l"><span class="logo">🐱</span><div><h1>Mochi Dashboard</h1><p>Xiaozhi AI Assistant cho bé</p></div></div>
+  <div class="st on" id="srv"><span class="dot"></span><span>Server Online</span></div>
+</div>
+<div class="ct">
+  <div class="tabs">
+    <button class="tab active" onclick="sw('setup')">📱 Kết nối</button>
+    <button class="tab" onclick="sw('personas')">🎭 Personas</button>
+    <button class="tab" onclick="sw('features')">⚡ Tính năng</button>
+  </div>
+  <div class="tc active" id="t-setup">
+    <div class="cb">
+      <div style="font-size:44px;margin-bottom:10px">📡</div>
+      <h2 style="margin-bottom:6px">Kết nối Xiaozhi vào Mochi Server</h2>
+      <p style="color:var(--dim);margin-bottom:14px;font-size:13px">Copy URL và dán vào thiết bị Xiaozhi ESP32</p>
+      <div class="ws" id="wsU" onclick="cp()">wss://xiaozhi-server-production-5d25.up.railway.app/xiaozhi/v1/</div>
+      <p style="font-size:11px;color:var(--mut);margin-top:6px">Server: Railway &bull; WebSocket Secure</p>
+    </div>
+    <div class="g2">
+      <div class="cd">
+        <h2>📱 Cách 1: Web Flash Tool</h2>
+        <div class="sp"><div class="sn">1</div><div><h3>Mở Flash Tool</h3><p>Truy cập <a href="/flash" target="_blank">/flash</a> trên Chrome</p></div></div>
+        <div class="sp"><div class="sn">2</div><div><h3>Cắm USB vào Xiaozhi</h3><p>Kết nối ESP32 qua USB-C</p></div></div>
+        <div class="sp"><div class="sn">3</div><div><h3>Flash firmware</h3><p>Nhấn Connect &rarr; chọn cổng &rarr; Flash</p></div></div>
+      </div>
+      <div class="cd">
+        <h2>🌐 Cách 2: WiFi Config</h2>
+        <div class="sp"><div class="sn">1</div><div><h3>Giữ BOOT 5 giây</h3><p>Xiaozhi vào chế độ cài đặt WiFi</p></div></div>
+        <div class="sp"><div class="sn">2</div><div><h3>Kết nối "Xiaozhi-XXX"</h3><p>Trên điện thoại, kết nối WiFi Xiaozhi</p></div></div>
+        <div class="sp"><div class="sn">3</div><div><h3>Mở 192.168.4.1</h3><p>Nhập WiFi nhà + dán WebSocket URL</p></div></div>
+      </div>
+    </div>
+    <div class="cd">
+      <h2>⚙️ Cấu hình hệ thống</h2>
+      <div class="g3">
+        <div class="it"><span class="ii">🧠</span><div><h4>Gemini 2.0 Flash</h4><p>LLM thông minh</p></div></div>
+        <div class="it"><span class="ii">🎤</span><div><h4>Groq Whisper</h4><p>ASR giọng Việt</p></div></div>
+        <div class="it"><span class="ii">🔊</span><div><h4>EdgeTTS</h4><p>2 giọng nam+nữ</p></div></div>
+        <div class="it"><span class="ii">💾</span><div><h4>Local Memory</h4><p>Bộ nhớ dài hạn</p></div></div>
+        <div class="it"><span class="ii">🎯</span><div><h4>Silero VAD</h4><p>Phát hiện giọng nói</p></div></div>
+        <div class="it"><span class="ii">🔧</span><div><h4>7 Plugins</h4><p>role, study, weather</p></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="tc" id="t-personas">
+    <div class="cd">
+      <h2>🎭 12 Personas</h2>
+      <p style="color:var(--dim);font-size:12px;margin-bottom:16px">Mỗi persona có giọng nói + Knowledge Base riêng</p>
+      <div class="g3" id="pg"></div>
+    </div>
+    <div class="cd">
+      <h2>🧠 Bộ nhớ dài hạn</h2>
+      <p style="color:var(--dim);font-size:12px;margin-bottom:14px">Chung tất cả personas, nhớ bé qua mọi phiên</p>
+      <div class="ms">
+        <div class="mf"><h4>👧 Hồ sơ bé</h4><p>Tên, tuổi, lớp</p></div>
+        <div class="mf"><h4>💜 Sở thích</h4><p>Con vật, màu sắc</p></div>
+        <div class="mf"><h4>📚 Tiến độ học</h4><p>Từ Anh, toán</p></div>
+        <div class="mf"><h4>😊 Cảm xúc</h4><p>Vui/buồn, lý do</p></div>
+        <div class="mf"><h4>👨‍👩‍👧 Gia đình</h4><p>Ba mẹ, thú cưng</p></div>
+        <div class="mf"><h4>💬 Kỷ niệm</h4><p>Câu nói đáng nhớ</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="tc" id="t-features">
+    <div class="g2">
+      <div class="cd">
+        <h2>📚 Học tập</h2>
+        <div class="it"><span class="ii">🧮</span><div><h4>Toán nhanh</h4><p>Cộng trừ nhân chia, streak</p></div></div>
+        <div class="it"><span class="ii">🇬🇧</span><div><h4>Tiếng Anh</h4><p>60+ từ, phonics, hội thoại</p></div></div>
+        <div class="it"><span class="ii">📝</span><div><h4>Chính tả</h4><p>s/x, ch/tr + quy tắc nhớ</p></div></div>
+        <div class="it"><span class="ii">📖</span><div><h4>Đọc hiểu</h4><p>Đoạn văn + câu hỏi</p></div></div>
+        <div class="it"><span class="ii">🎭</span><div><h4>Thành ngữ</h4><p>12 thành ngữ hay</p></div></div>
+        <div class="it"><span class="ii">⏱️</span><div><h4>Study Timer</h4><p>Hẹn giờ học bài</p></div></div>
+        <div class="it"><span class="ii">📅</span><div><h4>Thử thách ngày</h4><p>Mỗi ngày 1 chủ đề</p></div></div>
+      </div>
+      <div class="cd">
+        <h2>🎮 Vui chơi</h2>
+        <div class="it"><span class="ii">📖</span><div><h4>Kể chuyện</h4><p>Cổ tích, phiêu lưu</p></div></div>
+        <div class="it"><span class="ii">🧩</span><div><h4>Đố vui</h4><p>Đố mẹo, sao ⭐🏅</p></div></div>
+        <div class="it"><span class="ii">🔬</span><div><h4>Khoa học vui</h4><p>Giải thích + thí nghiệm</p></div></div>
+        <div class="it"><span class="ii">🌍</span><div><h4>Khám phá TG</h4><p>12 nước, văn hóa</p></div></div>
+        <div class="it"><span class="ii">😊</span><div><h4>Cảm xúc</h4><p>Tâm sự, hít thở sâu</p></div></div>
+        <div class="it"><span class="ii">🎵</span><div><h4>Nhạc</h4><p>Play từ thư viện</p></div></div>
+        <div class="it"><span class="ii">🌤️</span><div><h4>Thời tiết</h4><p>Báo thời tiết HCM</p></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">✅ Đã copy URL!</div>
+<script>
+function sw(id){document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('active',['setup','personas','features'][i]===id)});document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));document.getElementById('t-'+id).classList.add('active')}
+function cp(){navigator.clipboard.writeText(document.getElementById('wsU').textContent);var t=document.getElementById('toast');t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2000)}
+var P=[
+{i:'📖',n:'Kể chuyện',d:'Cổ tích, phiêu lưu',v:'f',t:'"kể chuyện đi"'},
+{i:'🧩',n:'Đố vui',d:'Đố mẹo, sao ⭐',v:'m',t:'"đố em đi"'},
+{i:'🇬🇧',n:'Tiếng Anh',d:'60+ từ, 5 chủ đề',v:'f',t:'"dạy tiếng Anh"',k:1},
+{i:'🔤',n:'Phonics',d:'Phát âm ABC',v:'f',t:'"dạy phát âm"'},
+{i:'💬',n:'Hội thoại Anh',d:'Roleplay',v:'f',t:'"tập nói"'},
+{i:'🧮',n:'Toán nhanh',d:'Cộng trừ, streak',v:'m',t:'"cho bài toán"'},
+{i:'📝',n:'Chính tả',d:'s/x, ch/tr',v:'f',t:'"luyện chính tả"',k:1},
+{i:'📖',n:'Đọc hiểu',d:'Đoạn văn + hỏi',v:'f',t:'"đọc hiểu"'},
+{i:'🎭',n:'Thành ngữ',d:'12 thành ngữ',v:'f',t:'"dạy thành ngữ"',k:1},
+{i:'🔬',n:'Khoa học',d:'Giải thích + TN',v:'m',t:'"tại sao"',k:1},
+{i:'🌍',n:'Khám phá TG',d:'12 nước, chào',v:'m',t:'"nước Nhật"',k:1},
+{i:'😊',n:'Cảm xúc',d:'Tâm sự',v:'f',t:'"mình buồn"'}
+];
+var g=document.getElementById('pg');
+P.forEach(function(p){var kb=p.k?'<span style="margin-left:3px;font-size:9px;background:rgba(234,179,8,.15);color:#eab308;padding:1px 5px;border-radius:4px">📚KB</span>':'';
+g.innerHTML+='<div class="pc"><span class="pi">'+p.i+'</span><div class="pn">'+p.n+' '+kb+'</div><div class="pd">'+p.d+'</div><span class="pv '+(p.v==='f'?'vf':'vm')+'">'+(p.v==='f'?'👩 Nữ':'👨 Nam')+'</span><div class="pt">💬 '+p.t+'</div></div>'});
+</script>
+</body>
+</html>
