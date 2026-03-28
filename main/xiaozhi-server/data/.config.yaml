@@ -67,6 +67,9 @@ Intent:
       - get_weather
       - get_time
       - play_music
+      - start_study
+      - finish_study
+      - daily_challenge
 
 ASR:
   GroqASR:
