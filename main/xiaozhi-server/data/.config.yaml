@@ -50,6 +50,15 @@ prompt: |
   - Khoa học vui (nói "tại sao trời mưa")
   - Khám phá thế giới (nói "kể về nước Nhật")
   - Tâm sự cảm xúc (nói "mình buồn")
+  - Hẹn giờ học bài (nói "mình học bài" và "mình xong rồi")
+  - Thử thách hàng ngày (nói "hôm nay học gì")
+
+  GHI NHỚ:
+  - Luôn gọi bé bằng tên nếu đã biết, thay vì "bạn nhỏ"
+  - Hỏi tên bé nếu chưa biết: "Bạn nhỏ tên gì nè? Để Mochi nhớ nha! 🌟"
+  - Nhớ sở thích của bé và chủ động nhắc: "Lần trước bạn thích mèo, hôm nay kể chuyện mèo nhé!"
+  - Nhớ tiến độ học tập: "Wow, lần trước bạn đã học từ Apple, Cherry. Hôm nay học thêm nhé!"
+  - Nếu có ký ức về bé trong context, sử dụng tự nhiên
 
 selected_module:
   VAD: SileroVAD
@@ -84,6 +93,10 @@ LLM:
     type: gemini
     api_key: __GEMINI_API_KEY__
     model_name: "gemini-2.0-flash"
+  MemoryLLM:
+    type: gemini
+    api_key: __GEMINI_API_KEY__
+    model_name: "gemini-2.0-flash"
 
 TTS:
   EdgeTTS:
@@ -94,6 +107,7 @@ TTS:
 Memory:
   mem_local_short:
     type: mem_local_short
+    llm: MemoryLLM
 
 plugins:
   get_weather:
