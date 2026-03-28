@@ -151,8 +151,6 @@ class WebSocketServer:
         # Handle HTTP requests on the WebSocket port (for Railway single-port deploy)
         import os
         import re
-        from http import HTTPStatus
-        from websockets.datastructures import Headers
 
         path = request_headers.path or "/"
         data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
@@ -163,10 +161,10 @@ class WebSocketServer:
             if os.path.isfile(flash_file):
                 with open(flash_file, "r", encoding="utf-8") as f:
                     html = f.read()
-                body = html.encode("utf-8")
-                headers = Headers([("Content-Type", "text/html; charset=utf-8"), ("Content-Length", str(len(body)))])
-                return HTTPStatus.OK, headers, body
-            return HTTPStatus.NOT_FOUND, Headers(), b"Flash page not found"
+                resp = websocket.respond(200, html)
+                resp.headers["Content-Type"] = "text/html; charset=utf-8"
+                return resp
+            return websocket.respond(404, "Flash page not found")
 
         # Serve firmware download
         if path.startswith("/xiaozhi/ota/download/"):
@@ -177,13 +175,13 @@ class WebSocketServer:
                 if os.path.isfile(file_path):
                     with open(file_path, "rb") as f:
                         content = f.read()
-                    headers = Headers([
-                        ("Content-Type", "application/octet-stream"),
-                        ("Content-Length", str(len(content))),
-                        ("Content-Disposition", f'attachment; filename="{fname}"'),
-                    ])
-                    return HTTPStatus.OK, headers, content
-            return HTTPStatus.NOT_FOUND, Headers(), b"Firmware not found"
+                    resp = websocket.respond(200, "")
+                    resp.headers["Content-Type"] = "application/octet-stream"
+                    resp.headers["Content-Disposition"] = f'attachment; filename="{fname}"'
+                    resp.headers["Content-Length"] = str(len(content))
+                    resp.body = content
+                    return resp
+            return websocket.respond(404, "Firmware not found")
 
         # 如果是普通 HTTP 请求，返回 "server is running"
         return websocket.respond(200, "Server is running\n")
