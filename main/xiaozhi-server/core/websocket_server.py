@@ -173,6 +173,10 @@ class WebSocketServer:
             self.logger.bind(tag=TAG).info(f"OTA request from device: {device_id}, returning websocket: {websocket_url}")
             
             return_json = {
+                "activation": {
+                    "message": "已激活",
+                    "challenge": "",
+                },
                 "server_time": {
                     "timestamp": int(round(time_mod.time() * 1000)),
                     "timezone_offset": int(server_config.get("timezone_offset", 7)) * 60,
