@@ -146,11 +146,14 @@ class WebSocketServer:
     async def _http_response(self, websocket, request_headers):
         # 检查是否为 WebSocket 升级请求
         if request_headers.headers.get("connection", "").lower() == "upgrade":
-            # 如果是 WebSocket 请求，返回 None 允许握手继续
             return None
 
         # Handle HTTP requests on the WebSocket port (for Railway single-port deploy)
         import os
+        import re
+        from http import HTTPStatus
+        from websockets.datastructures import Headers
+
         path = request_headers.path or "/"
         data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
 
@@ -160,12 +163,13 @@ class WebSocketServer:
             if os.path.isfile(flash_file):
                 with open(flash_file, "r", encoding="utf-8") as f:
                     html = f.read()
-                return websocket.respond(200, html + "\n")
-            return websocket.respond(404, "Flash page not found\n")
+                body = html.encode("utf-8")
+                headers = Headers([("Content-Type", "text/html; charset=utf-8"), ("Content-Length", str(len(body)))])
+                return HTTPStatus.OK, headers, body
+            return HTTPStatus.NOT_FOUND, Headers(), b"Flash page not found"
 
         # Serve firmware download
         if path.startswith("/xiaozhi/ota/download/"):
-            import re
             fname = path.split("/")[-1]
             if re.match(r"^[A-Za-z0-9.\-_]+\.bin$", fname):
                 bin_dir = os.path.join(data_dir, "bin")
@@ -173,8 +177,13 @@ class WebSocketServer:
                 if os.path.isfile(file_path):
                     with open(file_path, "rb") as f:
                         content = f.read()
-                    return websocket.respond(200, content)
-            return websocket.respond(404, "Firmware not found\n")
+                    headers = Headers([
+                        ("Content-Type", "application/octet-stream"),
+                        ("Content-Length", str(len(content))),
+                        ("Content-Disposition", f'attachment; filename="{fname}"'),
+                    ])
+                    return HTTPStatus.OK, headers, content
+            return HTTPStatus.NOT_FOUND, Headers(), b"Firmware not found"
 
         # 如果是普通 HTTP 请求，返回 "server is running"
         return websocket.respond(200, "Server is running\n")
