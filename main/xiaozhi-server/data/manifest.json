@@ -1,12 +1,12 @@
 {
-  "name": "Mochi AI - Xiaozhi ESP-BOX-3",
-  "version": "2.2.5",
+  "name": "Mochi AI - Xiaozhi ESP32-S3 (1.83\" LCD)",
+  "version": "2.2.4",
   "builds": [
     {
       "chipFamily": "ESP32-S3",
       "parts": [
         {
-          "path": "https://raw.githubusercontent.com/tosic91/xiaozhi-esp32-server/main/main/xiaozhi-server/data/bin/esp-box-3.bin",
+          "path": "https://raw.githubusercontent.com/tosic91/xiaozhi-esp32-server/main/main/xiaozhi-server/data/bin/merged-binary.bin",
           "offset": 0
         }
       ]
