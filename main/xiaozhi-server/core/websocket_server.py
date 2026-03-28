@@ -153,7 +153,39 @@ class WebSocketServer:
         import re
 
         path = request_headers.path or "/"
+        method = request_headers.headers.get(":method", "GET").upper()
         data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
+
+        # Handle OTA requests (POST and GET) on WebSocket port for single-port deploy
+        # This allows 3D-MEGA firmware to get WebSocket URL via its OTA mechanism
+        if path == "/xiaozhi/ota/" or path == "/xiaozhi/ota":
+            import json as json_mod
+            import time as time_mod
+            server_config = self.config.get("server", {})
+            websocket_url = server_config.get("websocket", "")
+            if not websocket_url or "你的" in websocket_url:
+                from core.utils.util import get_local_ip
+                local_ip = get_local_ip()
+                ws_port = int(server_config.get("port", 8000))
+                websocket_url = f"ws://{local_ip}:{ws_port}/xiaozhi/v1/"
+            
+            device_id = request_headers.headers.get("device-id", "unknown")
+            self.logger.bind(tag=TAG).info(f"OTA request from device: {device_id}, returning websocket: {websocket_url}")
+            
+            return_json = {
+                "server_time": {
+                    "timestamp": int(round(time_mod.time() * 1000)),
+                    "timezone_offset": int(server_config.get("timezone_offset", 7)) * 60,
+                },
+                "firmware": {"version": "0.0.0", "url": ""},
+                "websocket": {"url": websocket_url, "token": ""},
+            }
+            resp = websocket.respond(200, json_mod.dumps(return_json, separators=(",", ":")))
+            resp.headers["Content-Type"] = "application/json"
+            resp.headers["Access-Control-Allow-Origin"] = "*"
+            resp.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+            resp.headers["Access-Control-Allow-Headers"] = "Content-Type, Device-Id, Client-Id, Protocol-Version"
+            return resp
 
         # Serve flash tool page
         if path == "/flash":
