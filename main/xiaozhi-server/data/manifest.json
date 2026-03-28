@@ -6,7 +6,7 @@
       "chipFamily": "ESP32-S3",
       "parts": [
         {
-          "path": "/xiaozhi/ota/firmware/esp-box-3.bin",
+          "path": "https://github.com/tosic91/xiaozhi-esp32-server/releases/download/v2.2.5-mochi/esp-box-3.bin",
           "offset": 0
         }
       ]
