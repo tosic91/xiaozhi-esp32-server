@@ -1,10 +1,12 @@
 import asyncio
+import os
 from aiohttp import web
 from config.logger import setup_logging
 from core.api.ota_handler import OTAHandler
 from core.api.vision_handler import VisionHandler
 
 TAG = __name__
+DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
 
 
 class SimpleHttpServer:
@@ -74,6 +76,15 @@ class SimpleHttpServer:
                         ),
                     ]
                 )
+
+                # Flash tool page
+                async def handle_flash_page(request):
+                    flash_file = os.path.join(DATA_DIR, "flash.html")
+                    if os.path.isfile(flash_file):
+                        return web.FileResponse(flash_file)
+                    return web.Response(text="Flash page not found", status=404)
+
+                app.router.add_get("/flash", handle_flash_page)
 
                 # 运行服务
                 runner = web.AppRunner(app)
