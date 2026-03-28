@@ -183,6 +183,23 @@ class WebSocketServer:
                     return resp
             return websocket.respond(404, "Firmware not found")
 
+        # Serve dashboard
+        if path == "/dashboard":
+            dash_file = os.path.join(data_dir, "dashboard.html")
+            if os.path.isfile(dash_file):
+                with open(dash_file, "r", encoding="utf-8") as f:
+                    html = f.read()
+                resp = websocket.respond(200, html)
+                resp.headers["Content-Type"] = "text/html; charset=utf-8"
+                return resp
+            return websocket.respond(404, "Dashboard not found")
+
+        # Root redirect to dashboard
+        if path == "/":
+            resp = websocket.respond(302, "")
+            resp.headers["Location"] = "/dashboard"
+            return resp
+
         # 如果是普通 HTTP 请求，返回 "server is running"
         return websocket.respond(200, "Server is running\n")
 
