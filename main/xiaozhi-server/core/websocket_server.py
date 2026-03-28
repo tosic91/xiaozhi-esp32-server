@@ -166,8 +166,20 @@ class WebSocketServer:
                 return resp
             return websocket.respond(404, "Flash page not found")
 
-        # Serve firmware download
-        if path.startswith("/xiaozhi/ota/download/"):
+        # Serve ESP Web Tools manifest.json
+        if path == "/xiaozhi/manifest.json":
+            manifest_file = os.path.join(data_dir, "manifest.json")
+            if os.path.isfile(manifest_file):
+                with open(manifest_file, "r", encoding="utf-8") as f:
+                    content = f.read()
+                resp = websocket.respond(200, content)
+                resp.headers["Content-Type"] = "application/json"
+                resp.headers["Access-Control-Allow-Origin"] = "*"
+                return resp
+            return websocket.respond(404, "Manifest not found")
+
+        # Serve firmware binary (for ESP Web Tools and manual download)
+        if path.startswith("/xiaozhi/ota/firmware/") or path.startswith("/xiaozhi/ota/download/"):
             fname = path.split("/")[-1]
             if re.match(r"^[A-Za-z0-9.\-_]+\.bin$", fname):
                 bin_dir = os.path.join(data_dir, "bin")
@@ -175,11 +187,11 @@ class WebSocketServer:
                 if os.path.isfile(file_path):
                     with open(file_path, "rb") as f:
                         content = f.read()
-                    resp = websocket.respond(200, "")
+                    resp = websocket.respond(200, content)
                     resp.headers["Content-Type"] = "application/octet-stream"
                     resp.headers["Content-Disposition"] = f'attachment; filename="{fname}"'
                     resp.headers["Content-Length"] = str(len(content))
-                    resp.body = content
+                    resp.headers["Access-Control-Allow-Origin"] = "*"
                     return resp
             return websocket.respond(404, "Firmware not found")
 

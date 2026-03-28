@@ -1,0 +1,15 @@
+{
+  "name": "Mochi AI - Xiaozhi ESP-BOX-3",
+  "version": "2.2.5",
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        {
+          "path": "/xiaozhi/ota/firmware/esp-box-3.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}

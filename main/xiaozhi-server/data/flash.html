@@ -3,50 +3,167 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Xiaozhi Flash Tool</title>
+<title>Mochi Flash Tool</title>
+<script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+:root{--bg:#0f0f1a;--card:#1a1a2e;--border:#2a2a3e;--accent:#7c3aed;--al:#a78bfa;--green:#22c55e;--text:#e2e8f0;--dim:#94a3b8;--pink:#ec4899;--blue:#3b82f6;--orange:#f59e0b}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui,sans-serif;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);color:#e0e0e0;min-height:100vh;padding:2rem}
-.c{max-width:700px;margin:0 auto}
-h1{text-align:center;font-size:2rem;color:#00d2ff;margin-bottom:2rem}
-.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:2rem;margin-bottom:1.5rem}
-.card h2{color:#00d2ff;margin-bottom:1rem}
-.step{display:flex;gap:1rem;margin-bottom:1rem;padding:1rem;background:rgba(255,255,255,.03);border-radius:12px}
-.sn{background:#3a7bd5;color:#fff;font-weight:bold;width:32px;height:32px;min-width:32px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-.sc h3{margin-bottom:.3rem}.sc p{font-size:.85rem;color:#aaa;line-height:1.5}
-a{color:#00d2ff}
-.btn{display:inline-block;padding:12px 24px;background:#3a7bd5;color:#fff;border-radius:8px;font-weight:600;text-decoration:none;margin-top:.5rem}
-.info{background:rgba(0,210,255,.1);border-left:3px solid #00d2ff;padding:1rem;border-radius:0 8px 8px 0;margin:1rem 0;font-size:.9rem}
-code{background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px;font-size:.85rem}
-dl{display:grid;grid-template-columns:auto 1fr;gap:.5rem 1rem;font-size:.85rem}
-dt{color:#888}dd{color:#00d2ff;font-family:monospace;word-break:break-all}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.container{max-width:560px;width:100%}
+.hero{text-align:center;margin-bottom:28px}
+.hero-icon{font-size:64px;margin-bottom:12px;animation:bounce 2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.hero h1{font-size:28px;font-weight:700;background:linear-gradient(135deg,#c084fc,#818cf8,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hero p{color:var(--dim);font-size:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;transition:.3s}
+.card:hover{border-color:rgba(124,58,237,.4)}
+.card h2{font-size:17px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.flash-zone{text-align:center;padding:32px 20px;background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(59,130,246,.08));border:2px dashed rgba(124,58,237,.4);border-radius:16px;margin-bottom:20px;transition:.3s}
+.flash-zone:hover{border-color:var(--accent);background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(59,130,246,.15))}
+.flash-zone .icon{font-size:48px;margin-bottom:12px;display:block}
+.flash-zone h3{font-size:18px;margin-bottom:6px;color:var(--al)}
+.flash-zone p{font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.5}
+/* Style ESP Web Tools button */
+esp-web-install-button{display:block}
+esp-web-install-button::part(invoke-button){
+  background:linear-gradient(135deg,var(--accent),#6366f1);
+  color:#fff;font-family:'Inter',sans-serif;font-size:16px;font-weight:600;
+  padding:14px 40px;border-radius:12px;border:none;cursor:pointer;
+  box-shadow:0 6px 20px rgba(124,58,237,.4);transition:.3s;
+  display:inline-flex;align-items:center;gap:8px
+}
+esp-web-install-button::part(invoke-button):hover{
+  transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,.5)
+}
+esp-web-install-button[install-unsupported]::before{
+  content:"⚠️ Trình duyệt không hỗ trợ Web Serial. Vui lòng dùng Chrome hoặc Edge.";
+  display:block;padding:14px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);
+  border-radius:10px;color:var(--orange);font-size:13px;text-align:center;margin-bottom:16px
+}
+.steps{display:flex;flex-direction:column;gap:10px}
+.step{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:rgba(124,58,237,.04);border-radius:10px;transition:.2s}
+.step:hover{background:rgba(124,58,237,.1)}
+.step-num{width:28px;height:28px;min-width:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.step h4{font-size:13px;font-weight:600;margin-bottom:2px}
+.step p{font-size:11.5px;color:var(--dim);line-height:1.4}
+.info-box{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--green);display:flex;align-items:center;gap:8px;margin-top:16px}
+.warn-box{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--orange);display:flex;align-items:flex-start;gap:8px;margin-top:12px}
+.server-info{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:12px;margin-top:12px}
+.server-info dt{color:var(--dim)}.server-info dd{color:var(--al);font-family:monospace;word-break:break-all}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--dim);font-size:13px;text-decoration:none;margin-bottom:16px;transition:.2s}
+.back:hover{color:var(--al)}
+.alt-method{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.alt-method summary{font-size:13px;color:var(--dim);cursor:pointer;padding:6px 0}
+.alt-method summary:hover{color:var(--al)}
+.alt-steps{margin-top:12px}
 </style>
 </head>
 <body>
-<div class="c">
-<h1>⚡ Xiaozhi Flash Tool</h1>
-<div class="card">
-<h2>📡 Server</h2>
-<dl>
-<dt>OTA:</dt><dd>https://xiaozhi-server-production-5d25.up.railway.app/xiaozhi/ota/</dd>
-<dt>WebSocket:</dt><dd>wss://xiaozhi-server-production-5d25.up.railway.app/xiaozhi/v1/</dd>
-<dt>Board:</dt><dd>ESP-BOX-3 — v2.2.5</dd>
-</dl>
-</div>
-<div class="card">
-<h2>🔧 Flash (5 bước)</h2>
-<div class="step"><div class="sn">1</div><div class="sc"><h3>Cắm ESP-BOX-3</h3><p>Dây USB-C DATA. Boot mode: giữ BOOT → nhấn RST → thả BOOT</p></div></div>
-<div class="step"><div class="sn">2</div><div class="sc"><h3>Tải firmware</h3><p><a href="/xiaozhi/ota/download/esp-box-3.bin" class="btn" download>⬇️ Download esp-box-3.bin</a></p></div></div>
-<div class="step"><div class="sn">3</div><div class="sc"><h3>Mở Web Flasher</h3><p><a href="https://web.esptool.io/" target="_blank" class="btn">🌐 web.esptool.io</a> (Chrome/Edge)</p></div></div>
-<div class="step"><div class="sn">4</div><div class="sc"><h3>Flash</h3><p>Connect → chọn ESP32-S3 → Address: <code>0x0</code> → chọn file → Program</p></div></div>
-<div class="step"><div class="sn">5</div><div class="sc"><h3>WiFi</h3><p>Kết nối WiFi "Xiaozhi-XXXX" → nhập WiFi nhà → Done!</p></div></div>
-<div class="info">✅ Thiết bị tự kết nối server Railway với AI Gemini!</div>
-</div>
-<div class="card">
-<h2>🧪 Test không cần thiết bị</h2>
-<p><a href="https://xiaozhi.xcnahida.cn/tools/test_page/" target="_blank" class="btn">🎤 Web Test</a></p>
-<div class="info">WS: <code>wss://xiaozhi-server-production-5d25.up.railway.app/xiaozhi/v1/</code></div>
-</div>
+<div class="container">
+  <a href="/dashboard" class="back">← Quay lại Dashboard</a>
+  
+  <div class="hero">
+    <span class="hero-icon">⚡</span>
+    <h1>Mochi Flash Tool</h1>
+    <p>Flash firmware trực tiếp từ trình duyệt — chỉ cắm USB và bấm nút</p>
+  </div>
+
+  <div class="flash-zone">
+    <span class="icon">🔌</span>
+    <h3>Flash Mochi vào Xiaozhi</h3>
+    <p>Cắm ESP-BOX-3 qua USB-C → bấm nút bên dưới → chọn cổng → chờ flash xong!</p>
+    
+    <esp-web-install-button manifest="/xiaozhi/manifest.json">
+      <button slot="activate">🚀 Flash Firmware</button>
+      <span slot="unsupported">
+        <p style="color:var(--orange);font-size:13px">⚠️ Trình duyệt không hỗ trợ. Vui lòng dùng <strong>Chrome</strong> hoặc <strong>Edge</strong> trên máy tính.</p>
+      </span>
+      <span slot="not-allowed">
+        <p style="color:var(--pink);font-size:13px">🔒 Trang cần HTTPS để sử dụng Web Serial.</p>
+      </span>
+    </esp-web-install-button>
+  </div>
+
+  <div class="card">
+    <h2>📋 Hướng dẫn</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h4>Cắm USB-C vào Xiaozhi</h4>
+          <p>Dùng dây USB-C DATA (không phải sạc). Cắm vào cổng USB trên ESP-BOX-3.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h4>Vào Boot Mode (nếu cần)</h4>
+          <p>Giữ nút <strong>BOOT</strong> → nhấn <strong>RST</strong> → thả BOOT. Thiết bị sẽ vào chế độ flash.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h4>Bấm "Flash Firmware" ở trên</h4>
+          <p>Chọn cổng serial (thường là "USB JTAG" hoặc "CP210x") → chờ flash hoàn tất (~2 phút).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div>
+          <h4>Cấu hình WiFi</h4>
+          <p>Sau khi flash xong, kết nối WiFi "Xiaozhi-XXXX" → mở 192.168.4.1 → nhập WiFi nhà.</p>
+        </div>
+      </div>
+    </div>
+    <div class="info-box">
+      <span>✅</span>
+      <span>Firmware: ESP-BOX-3 v2.2.5 — Mochi AI tự động kết nối server Railway!</span>
+    </div>
+    <div class="warn-box">
+      <span>💡</span>
+      <span>Nếu không thấy nút Flash, hãy mở trang này trên <strong>Chrome/Edge</strong> trên máy tính (không phải điện thoại). Web Serial API yêu cầu kết nối HTTPS.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📡 Server Info</h2>
+    <dl class="server-info">
+      <dt>WebSocket:</dt><dd>wss://xiaozhi-server-production-5d25.up.railway.app/xiaozhi/v1/</dd>
+      <dt>Board:</dt><dd>ESP-BOX-3 — v2.2.5</dd>
+      <dt>AI:</dt><dd>Gemini 2.0 Flash + EdgeTTS</dd>
+    </dl>
+    
+    <details class="alt-method">
+      <summary>📥 Cách khác: Tải file flash thủ công</summary>
+      <div class="alt-steps">
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div>
+              <h4>Tải firmware</h4>
+              <p><a href="/xiaozhi/ota/firmware/esp-box-3.bin" download style="color:var(--al)">⬇️ Download esp-box-3.bin</a> (16MB)</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div>
+              <h4>Mở ESPTool Web</h4>
+              <p><a href="https://espressif.github.io/esptool-js/" target="_blank" style="color:var(--al)">🌐 espressif.github.io/esptool-js</a></p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div>
+              <h4>Flash thủ công</h4>
+              <p>Connect → Address: <code style="background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px">0x0</code> → chọn file → Program</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
 </div>
 </body>
 </html>
