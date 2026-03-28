@@ -84,7 +84,20 @@ class SimpleHttpServer:
                         return web.FileResponse(flash_file)
                     return web.Response(text="Flash page not found", status=404)
 
+                # Dashboard page
+                async def handle_dashboard(request):
+                    dash_file = os.path.join(DATA_DIR, "dashboard.html")
+                    if os.path.isfile(dash_file):
+                        return web.FileResponse(dash_file)
+                    return web.Response(text="Dashboard not found", status=404)
+
+                # Root redirect to dashboard
+                async def handle_root(request):
+                    raise web.HTTPFound('/dashboard')
+
+                app.router.add_get("/", handle_root)
                 app.router.add_get("/flash", handle_flash_page)
+                app.router.add_get("/dashboard", handle_dashboard)
 
                 # 运行服务
                 runner = web.AppRunner(app)
