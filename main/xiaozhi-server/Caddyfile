@@ -1,0 +1,36 @@
+{
+	auto_https off
+	admin off
+}
+
+:{$PORT:8080} {
+	# OTA endpoint - route to aiohttp (handles POST properly)
+	@ota_post {
+		method POST OPTIONS
+		path /xiaozhi/ota /xiaozhi/ota/
+	}
+	handle @ota_post {
+		reverse_proxy localhost:8001
+	}
+
+	# OTA GET, download, flash, dashboard - route to aiohttp
+	@http_routes {
+		path /xiaozhi/ota /xiaozhi/ota/ /xiaozhi/ota/download/* /flash /dashboard / /xiaozhi/manifest.json /xiaozhi/ota/firmware/* /mcp/vision/*
+	}
+	handle @http_routes {
+		reverse_proxy localhost:8001
+	}
+
+	# WebSocket - route to websockets server
+	@websocket {
+		path /xiaozhi/v1 /xiaozhi/v1/
+	}
+	handle @websocket {
+		reverse_proxy localhost:8000
+	}
+
+	# Default fallback to http server
+	handle {
+		reverse_proxy localhost:8001
+	}
+}

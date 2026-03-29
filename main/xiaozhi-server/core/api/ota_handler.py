@@ -155,17 +155,12 @@ class OTAHandler(BaseHandler):
             self.logger.bind(tag=TAG).debug(f"OTA请求头: {request.headers}")
             self.logger.bind(tag=TAG).debug(f"OTA请求数据: {data}")
 
-            device_id = request.headers.get("device-id", "")
-            if device_id:
-                self.logger.bind(tag=TAG).info(f"OTA请求设备ID: {device_id}")
-            else:
-                raise Exception("OTA请求设备ID为空")
+            device_id = request.headers.get("device-id", "unknown")
+            self.logger.bind(tag=TAG).info(f"OTA POST from device: {device_id}")
 
-            client_id = request.headers.get("client-id", "")
-            if client_id:
+            client_id = request.headers.get("client-id", "unknown")
+            if client_id != "unknown":
                 self.logger.bind(tag=TAG).info(f"OTA请求ClientID: {client_id}")
-            else:
-                raise Exception("OTA请求ClientID为空")
 
             data_json = {}
             try:
@@ -353,15 +348,33 @@ class OTAHandler(BaseHandler):
             return response
 
     async def handle_get(self, request):
-        """处理 OTA GET 请求"""
+        """处理 OTA GET 请求 - 返回JSON格式（与POST一致）"""
         try:
+            import time as time_mod
             server_config = self.config["server"]
             local_ip = get_local_ip()
-            # use websocket port for websocket URL
             websocket_port = int(server_config.get("port", 8000))
             websocket_url = self._get_websocket_url(local_ip, websocket_port)
-            message = f"OTA接口运行正常，向设备发送的websocket地址是：{websocket_url}"
-            response = web.Response(text=message, content_type="text/plain")
+
+            device_id = request.headers.get("device-id", "unknown")
+            self.logger.bind(tag=TAG).info(f"OTA GET from device: {device_id}, ws: {websocket_url}")
+
+            return_json = {
+                "activation": {
+                    "message": "已激活",
+                    "challenge": "",
+                },
+                "server_time": {
+                    "timestamp": int(round(time_mod.time() * 1000)),
+                    "timezone_offset": int(server_config.get("timezone_offset", 7)) * 60,
+                },
+                "firmware": {"version": "0.0.0", "url": ""},
+                "websocket": {"url": websocket_url, "token": ""},
+            }
+            response = web.Response(
+                text=json.dumps(return_json, separators=(",", ":")),
+                content_type="application/json",
+            )
         except Exception as e:
             self.logger.bind(tag=TAG).error(f"OTA GET请求异常: {e}")
             response = web.Response(text="OTA接口异常", content_type="text/plain")
