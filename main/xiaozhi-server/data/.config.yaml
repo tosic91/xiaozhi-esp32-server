@@ -1,6 +1,6 @@
 server:
   port: 8000
-  http_port: 8001
+  ws_internal_port: 8001
   websocket: wss://xiaozhi-server-production-5d25.up.railway.app/xiaozhi/v1/
   timezone_offset: +7
   auth:

@@ -71,7 +71,10 @@ class WebSocketServer:
     async def start(self):
         server_config = self.config["server"]
         host = server_config.get("ip", "0.0.0.0")
-        port = int(server_config.get("port", 8000))
+        # Listen on internal port (not the public Railway port)
+        # Public port is handled by aiohttp which proxies WS here
+        port = int(server_config.get("ws_internal_port", 8001))
+        self.logger.bind(tag=TAG).info(f"WebSocket server listening on {host}:{port}")
 
         async with websockets.serve(
             self._handle_connection, host, port, process_request=self._http_response
